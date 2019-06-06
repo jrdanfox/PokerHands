@@ -2,20 +2,11 @@ package poker;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Solution {
-	
-	// Deal a hand of 5 cards
-	public static Card[] dealHand(String[] cardStrings) {
-		Card[] hand = new Card[5];
-		for (int i = 0; i < cardStrings.length; i++) {
-			hand[i] = new Card(cardStrings[i].charAt(0), cardStrings[i].charAt(1));
-			System.out.print(Character.toString(hand[i].getValue()) + Character.toString(hand[i].getSuit()) + " ");
-		}
-		System.out.print("\n");
-		return hand;
-	}
 
 	public static void main(String[] args) throws FileNotFoundException {
 		// file io stuff
@@ -26,7 +17,7 @@ public class Solution {
 		int cardCount = 0;
 		int handCount = 0;
 		
-		Card[] blackHand, whiteHand;
+		Hand blackHand, whiteHand;
 		
 		while (scanner.hasNext()) {
 			String next = scanner.next();
@@ -35,10 +26,10 @@ public class Solution {
 				cardCount++;
 				if (cardCount == 5) {
 					if (handCount == 0) { // deal black a hand
-						blackHand = dealHand(handStrings);
+						blackHand = new Hand(handStrings);
 						handCount++;
 					} else { // deal white a hand, reset handCount
-						whiteHand = dealHand(handStrings);
+						whiteHand = new Hand(handStrings);
 						handCount = 0;
 					}
 					cardCount = 0;
@@ -46,5 +37,7 @@ public class Solution {
 			}
 		}
 		scanner.close();
+		
+		Score.test(new String[] {"2D", "2C", "7H", "KD", "AD"});
 	}
 }
