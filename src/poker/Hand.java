@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hand {
+	
 	private List<Card> cards;
+	private int rank;
+	private char tieBreaker;
 	
 	// return a list of all of the values in this hand
 	public List<Character> getAllValues() {
@@ -47,5 +50,21 @@ public class Hand {
 		for (int i = 0; i < cardStrings.length; i++) {
 			this.cards.add(new Card(cardStrings[i].charAt(0), cardStrings[i].charAt(1)));
 		}
+	}
+
+	public int getRank() {
+		return rank;
+	}
+
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
+
+	public char getTieBreaker() {
+		return tieBreaker;
+	}
+
+	public void setTieBreaker(char tieBreaker) {
+		this.tieBreaker = tieBreaker;
 	}
 }

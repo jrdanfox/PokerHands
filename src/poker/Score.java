@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Score {
 	
-	private static List<Character> nextVals = Arrays.asList('2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'); 
+	private static List<Character> orderOfValues = Arrays.asList('2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'); 
 	
 	/***********	USEFUL PRIVATE CLASS METHODS	***************************************/
 	
@@ -52,23 +52,20 @@ public class Score {
 		return max;
 	}
 	
+	// return the minimum value of hand
+	private static char minValue(Hand hand) {
+		List<Character> values = hand.getAllValues();
+		char min = values.get(0);
+		for (int i = 1; i < hand.getSize(); i++) {
+			if (orderOfValues.indexOf(values.get(i)) < orderOfValues.indexOf(min)) min = values.get(i);
+		}
+		return min;
+	}
+	
 	/***********	CHECK RANK OF HAND	*****************************************/
 	
 	private static boolean checkStraightFlush(Hand hand) {
-		boolean isStraightFlush = true;
-		char firstSuit = hand.getCard(0).getSuit();
-		char currentValue = hand.getCard(0).getValue();
-		List<Character> values = hand.getAllValues();
-		
-		for (int i = 1; i < hand.getSize(); i++) {
-			char nextValue = nextVals.get(nextVals.indexOf(currentValue) + 1);
-			if (hand.getCard(i).getSuit() != firstSuit || !values.contains(nextValue)) {
-				isStraightFlush = false;
-			}
-			currentValue = nextValue;
-		}
-		
-		return isStraightFlush;
+		return checkFlush(hand) && checkStraight(hand);
 	}
 	
 	private static boolean checkFourOfAKind(Hand hand) {
@@ -79,8 +76,23 @@ public class Score {
 		return maxDuplicateValues(hand) == 3 && containsPair(hand);
 	}
 	
-	private static boolean checkStraight(Hand hand) {
+	private static boolean checkFlush(Hand hand) {
 		return maxDuplicateSuits(hand) == 5;
+	}
+	
+	private static boolean checkStraight(Hand hand) {
+		boolean isStraight = true;
+		List<Character> values = hand.getAllValues();
+		char currentValue = minValue(hand);
+		for (int i = 0; i < values.size(); i++) {
+			if (!(values.get(i) == minValue(hand))) {
+				char nextValue = orderOfValues.get(orderOfValues.indexOf(currentValue) + 1);
+				if (!values.contains(nextValue)) isStraight = false;
+				currentValue = nextValue;
+			}
+		}
+		
+		return isStraight;
 	}
 	
 	private static boolean checkThreeOfAKind(Hand hand) {
@@ -95,11 +107,37 @@ public class Score {
 		return doubleNoPairs(hand) == 2;
 	}
 	
+	private static void rankHand(Hand hand) {
+		if (checkStraightFlush(hand)) {
+			hand.setRank(8);
+		} else if (checkFourOfAKind(hand)) {
+			hand.setRank(7);
+		} else if (checkFullHouse(hand)) {
+			hand.setRank(6);
+		} else if (checkFlush(hand)) {
+			hand.setRank(5);
+		} else if (checkStraight(hand)) {
+			hand.setRank(4);
+		} else if (checkThreeOfAKind(hand)) {
+			hand.setRank(3);
+		} else if (checkTwoPairs(hand)) {
+			hand.setRank(2);
+		} else if (checkPair(hand)) {
+			hand.setRank(1);
+		} else {
+			hand.setRank(0);
+		}
+		
+	}
+	
 	public static void test(String[] cards) {
 		Hand hand = new Hand(cards);
-		System.out.println("Stratight flush: " + checkStraightFlush(hand));
+		rankHand(hand);
+		System.out.println("Rank: " + hand.getRank());
+		System.out.println("Straight flush: " + checkStraightFlush(hand));
 		System.out.println("Four of a kind: " + checkFourOfAKind(hand));
 		System.out.println("Full house: " + checkFullHouse(hand));
+		System.out.println("Flush: " + checkFlush(hand));
 		System.out.println("Straight: " + checkStraight(hand));
 		System.out.println("Three of a kind: " + checkThreeOfAKind(hand));
 		System.out.println("Two pairs: " + checkTwoPairs(hand));
