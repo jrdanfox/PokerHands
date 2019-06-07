@@ -2,8 +2,6 @@ package poker;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Solution {
@@ -17,7 +15,7 @@ public class Solution {
 		int cardCount = 0;
 		int handCount = 0;
 		
-		Hand blackHand, whiteHand;
+		Hand blackHand = null, whiteHand = null;
 		
 		while (scanner.hasNext()) {
 			String next = scanner.next();
@@ -31,6 +29,14 @@ public class Solution {
 					} else { // deal white a hand, reset handCount
 						whiteHand = new Hand(handStrings);
 						handCount = 0;
+						int winner = Score.compareHands(blackHand, whiteHand);
+						if (winner == 0) {
+							System.out.println("Black wins.");
+						} else if (winner == 1) {
+							System.out.println("White wins.");
+						} else {
+							System.out.println("Tie.");
+						}
 					}
 					cardCount = 0;
 				}

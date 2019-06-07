@@ -52,14 +52,24 @@ public class Score {
 		return max;
 	}
 	
-	// return the minimum value of hand
-	private static char minValue(Hand hand) {
+	// return maximum value of hand
+	private static char maxValue(Hand hand) {
 		List<Character> values = hand.getAllValues();
-		char min = values.get(0);
+		char max = values.get(0);
 		for (int i = 1; i < hand.getSize(); i++) {
-			if (orderOfValues.indexOf(values.get(i)) < orderOfValues.indexOf(min)) min = values.get(i);
+			if (orderOfValues.indexOf(values.get(i)) > orderOfValues.indexOf(max)) max = values.get(i);
 		}
-		return min;
+		return max;
+	}
+	
+	// return the number of occurences of the value in hand
+	private static int cardCount(Hand hand, char value) {
+		int count = 0;
+		List<Character> values = hand.getAllValues();
+		for (int i = 1; i < hand.getSize(); i++) {
+			if (values.get(i) == value) count++;
+		}
+		return count;
 	}
 	
 	/***********	CHECK RANK OF HAND	*****************************************/
@@ -110,36 +120,73 @@ public class Score {
 	private static void rankHand(Hand hand) {
 		if (checkStraightFlush(hand)) {
 			hand.setRank(8);
+			hand.setTieBreaker(maxValue(hand));
 		} else if (checkFourOfAKind(hand)) {
 			hand.setRank(7);
+			if (cardCount(hand, hand.getCard(0).getValue()) > 1) {
+				hand.setTieBreaker(hand.getCard(0).getValue());
+			} else {
+				hand.setTieBreaker(hand.getCard(1).getValue());
+			}
 		} else if (checkFullHouse(hand)) {
 			hand.setRank(6);
-		} else if (checkFlush(hand)) {
+			for (int i = 0; i < hand.getSize(); i++) {
+				if (cardCount(hand, hand.getCard(i).getValue()) == 3) {
+					hand.setTieBreaker(hand.getCard(i).getValue());
+					break;
+				}
+			}
+		} else if (checkFlush(hand)) { // tiebreaker causes issue
 			hand.setRank(5);
+			hand.setTieBreaker(maxValue(hand));
 		} else if (checkStraight(hand)) {
 			hand.setRank(4);
+			hand.setTieBreaker(maxValue(hand));
 		} else if (checkThreeOfAKind(hand)) {
 			hand.setRank(3);
+			for (int i = 0; i < hand.getSize(); i++) {
+				if (cardCount(hand, hand.getCard(i).getValue()) == 3) {
+					hand.setTieBreaker(hand.getCard(i).getValue());
+					break;
+				}
+			}
 		} else if (checkTwoPairs(hand)) {
 			hand.setRank(2);
 		} else if (checkPair(hand)) {
 			hand.setRank(1);
-		} else {
+		} else { // tiebreaker issue
 			hand.setRank(0);
 		}
+	}
+	
+	// return 0 if black wins, 1 if white wins, -1 if tie
+	public static int compareHands(Hand black, Hand white) {
+		rankHand(black);
+		rankHand(white);
+		int winner;
+		if (black.getRank() > white.getRank()) {
+			winner = 0;
+		} else if (black.getRank() < white.getRank()) {
+			winner = 1;
+		} else {
+			winner = -1;
+		}
+		
+		return winner;
 	}
 	
 	public static void test(String[] cards) {
 		Hand hand = new Hand(cards);
 		rankHand(hand);
-		System.out.println("Rank: " + hand.getRank());
-		System.out.println("Straight flush: " + checkStraightFlush(hand));
-		System.out.println("Four of a kind: " + checkFourOfAKind(hand));
-		System.out.println("Full house: " + checkFullHouse(hand));
-		System.out.println("Flush: " + checkFlush(hand));
-		System.out.println("Straight: " + checkStraight(hand));
-		System.out.println("Three of a kind: " + checkThreeOfAKind(hand));
-		System.out.println("Two pairs: " + checkTwoPairs(hand));
-		System.out.println("One pair: " + checkPair(hand));
+		
+//		System.out.println("Rank: " + hand.getRank());
+//		System.out.println("Straight flush: " + checkStraightFlush(hand));
+//		System.out.println("Four of a kind: " + checkFourOfAKind(hand));
+//		System.out.println("Full house: " + checkFullHouse(hand));
+//		System.out.println("Flush: " + checkFlush(hand));
+//		System.out.println("Straight: " + checkStraight(hand));
+//		System.out.println("Three of a kind: " + checkThreeOfAKind(hand));
+//		System.out.println("Two pairs: " + checkTwoPairs(hand));
+//		System.out.println("One pair: " + checkPair(hand));
 	}
 }
