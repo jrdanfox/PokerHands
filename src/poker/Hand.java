@@ -8,6 +8,9 @@ public class Hand {
 	private List<Card> cards;
 	private int rank;
 	private char tieBreaker;
+	private char primaryWinValue; 
+	private char secondaryWinValue; // only useful for full house, 2 pair
+	private boolean tied;
 	
 	// return a list of all of the values in this hand
 	public List<Character> getAllValues() {
@@ -66,5 +69,29 @@ public class Hand {
 
 	public void setTieBreaker(char tieBreaker) {
 		this.tieBreaker = tieBreaker;
+	}
+
+	public char getPrimaryWinValue() {
+		return primaryWinValue;
+	}
+
+	public void setPrimaryWinValue(char primaryWinValue) {
+		this.primaryWinValue = primaryWinValue;
+	}
+
+	public char getSecondaryWinValue() {
+		return secondaryWinValue;
+	}
+
+	public void setSecondaryWinValue(char secondaryWinValue) {
+		this.secondaryWinValue = secondaryWinValue;
+	}
+
+	public boolean isTied() {
+		return tied;
+	}
+
+	public void setTied(boolean tied) {
+		this.tied = tied;
 	}
 }
