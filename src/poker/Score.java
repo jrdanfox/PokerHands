@@ -83,13 +83,13 @@ public class Score {
 	private static boolean checkStraight(Hand hand) {
 		boolean isStraight = true;
 		List<Character> values = hand.getAllValues();
-		char currentValue = minValue(hand);
-		for (int i = 0; i < values.size(); i++) {
-			if (!(values.get(i) == minValue(hand))) {
-				char nextValue = orderOfValues.get(orderOfValues.indexOf(currentValue) + 1);
-				if (!values.contains(nextValue)) isStraight = false;
-				currentValue = nextValue;
-			}
+		Collections.sort(values);
+		
+		char currentValue = values.get(0);
+		for (int i = 1; i < values.size();i++) {
+			char nextvalue = orderOfValues.get(orderOfValues.indexOf(currentValue) + 1);
+			if (!values.contains(nextvalue)) isStraight = false;
+			currentValue = nextvalue;
 		}
 		
 		return isStraight;
@@ -127,7 +127,6 @@ public class Score {
 		} else {
 			hand.setRank(0);
 		}
-		
 	}
 	
 	public static void test(String[] cards) {

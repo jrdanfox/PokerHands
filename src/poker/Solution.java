@@ -38,6 +38,6 @@ public class Solution {
 		}
 		scanner.close();
 		
-		Score.test(new String[] {"2D", "3D", "4D", "5D", "6D"});
+		Score.test(new String[] {"2D", "2C", "3S", "4H", "5S"});
 	}
 }
